@@ -5,14 +5,13 @@ BEGIN { use_ok('IOLayer::QuotedPrint') }
 my $file = 't/test.qp';
 
 my $decoded = <<EOD;
-This is a tést for quoted-printable
-text that has hàrdly any speçial characters
+This is a tést for quoted-printable text that has hàrdly any speçial characters
 in it.
 EOD
 
 my $encoded = <<EOD;
-This is a t=E9st for quoted-printable
-text that has h=E0rdly any spe=E7ial characters
+This is a t=E9st for quoted-printable text that has h=E0rdly any spe=E7ial =
+characters
 in it.
 EOD
 

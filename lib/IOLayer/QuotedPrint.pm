@@ -5,26 +5,19 @@ package IOLayer::QuotedPrint;
 # Set the version info
 
 use strict;
-$IOLayer::QuotedPrint::VERSION = 0.01;
+$IOLayer::QuotedPrint::VERSION = 0.02;
 
 # Make sure the encoding/decoding stuff is available
 
 use MIME::QuotedPrint (); # no need to pollute this namespace
 
 #-----------------------------------------------------------------------
-#  IN: 1 class
+#  IN: 1 class to bless with
 #      2 mode string (ignored)
 #      3 file handle of PerlIO layer below (ignored)
 # OUT: 1 blessed object
 
-sub PUSHED {
-
-# Initialize the buffer to be used
-# Bless it as the object we're gonna use and return that
-
-    my $write = '';
-    return bless \$write,$_[0];
-} #PUSHED
+sub PUSHED { bless \&PUSHED,$_[0] } #PUSHED
 
 #-----------------------------------------------------------------------
 #  IN: 1 instantiated object (ignored)
@@ -37,47 +30,27 @@ sub FILL {
 # Decode if there is something decode and return result or signal eof
 
     my $line = readline( $_[1] );
-    return (defined $line) ? MIME::QuotedPrint::decode_qp( $line ) : undef;
+    (defined $line) ? MIME::QuotedPrint::decode_qp( $line ) : undef;
 } #FILL
 
 #-----------------------------------------------------------------------
-#  IN: 1 instantiated object (reference to buffer)
+#  IN: 1 instantiated object (ignored)
 #      2 buffer to be written
-#      3 handle to write to (ignored)
-# OUT: 1 number of bytes "written"
+#      3 handle to write to
+# OUT: 1 number of bytes written
 
 sub WRITE {
 
-# Encode whatever needs to be encoded and add to our buffer
-# Return indicating we read the entire buffer
+# Encode whatever needs to be encoded and write to handle: indicate result
 
-    $$_[0] .= MIME::QuotedPrint::encode_qp( $_[1] );
-    return length( $_[1] );
+    (print {$_[2]} MIME::QuotedPrint::encode_qp($_[1])) ? length($_[1]) : -1;
 } #WRITE
-
-#-----------------------------------------------------------------------
-#  IN: 1 instantiated object (reference to buffer)
-#      2 handle to write to
-# OUT: 1 flag indicating error
-
-sub FLUSH {
-
-# Write out what we have in the buffer
-# Reset the buffer
-# Return indicating success
-
-    print {$_[1]} $$_[0] or return -1;
-    $$_[0] = '';
-    return 0;
-} #FLUSH
 
 # Satisfy -require-
 
 1;
 
 __END__
-
-package IOLayer::QuotedPrint;
 
 =head1 NAME
 
