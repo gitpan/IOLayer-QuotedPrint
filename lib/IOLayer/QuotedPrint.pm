@@ -5,7 +5,7 @@ package IOLayer::QuotedPrint;
 # Set the version info
 
 use strict;
-$IOLayer::QuotedPrint::VERSION = 0.02;
+$IOLayer::QuotedPrint::VERSION = 0.03;
 
 # Make sure the encoding/decoding stuff is available
 
@@ -17,7 +17,7 @@ use MIME::QuotedPrint (); # no need to pollute this namespace
 #      3 file handle of PerlIO layer below (ignored)
 # OUT: 1 blessed object
 
-sub PUSHED { bless \&PUSHED,$_[0] } #PUSHED
+sub PUSHED { bless [],$_[0] } #PUSHED
 
 #-----------------------------------------------------------------------
 #  IN: 1 instantiated object (ignored)
